@@ -1,5 +1,6 @@
 package com.cospina.springboot.reactor.app;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +35,26 @@ public class SpringBootReactorApplication implements CommandLineRunner {
 //		userCommentsFlatMapExample();
 //		userCommentsZipWithExample();
 //		userCommentsZipWithForm2Example();
-		zipWithRangeExample();
+//		zipWithRangeExample();
+//		exampleInterval();
+		exampleDelayElements();
+	}
+
+	public void exampleDelayElements() throws InterruptedException {
+		Flux<Integer> range = Flux.range(1, 12).delayElements(Duration.ofSeconds(1))
+				.doOnNext(i -> log.info(i.toString()));
+
+		range.blockLast();
+
+//		range.subscribe();
+//		Thread.sleep(13000);
+	}
+
+	public void exampleInterval() {
+		Flux<Integer> range = Flux.range(1, 12);
+		Flux<Long> delay = Flux.interval(Duration.ofSeconds(1));
+
+		range.zipWith(delay, (ra, de) -> ra).doOnNext(i -> log.info(i.toString())).blockLast();
 	}
 
 	public void zipWithRangeExample() {
