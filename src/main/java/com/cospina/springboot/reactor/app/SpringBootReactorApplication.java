@@ -9,7 +9,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.cospina.springboot.reactor.app.model.Comments;
 import com.cospina.springboot.reactor.app.model.User;
+import com.cospina.springboot.reactor.app.model.UserComments;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -28,7 +30,22 @@ public class SpringBootReactorApplication implements CommandLineRunner {
 //		iterableExample();
 //		flatMapExample();
 //		toStringExample();
-		collectListExample();
+//		collectListExample();
+		userCommentsFlatMapExample();
+	}
+
+	public void userCommentsFlatMapExample() {
+		Mono<User> userMono = Mono.fromCallable(() -> new User("Jhon", "Doe"));
+
+		Mono<Comments> commentsUserMono = Mono.fromCallable(() -> {
+			Comments comments = new Comments();
+			comments.addComment("Hola pepe que tal");
+			comments.addComment("Mañana voy a la playa");
+			comments.addComment("Estoy tomando el curso de spring");
+			return comments;
+		});
+		userMono.flatMap(user -> commentsUserMono.map(comments -> new UserComments(user, comments)))
+				.subscribe(userComments -> log.info(userComments.toString()));
 	}
 
 	public void collectListExample() throws Exception {
