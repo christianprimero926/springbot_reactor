@@ -31,7 +31,44 @@ public class SpringBootReactorApplication implements CommandLineRunner {
 //		flatMapExample();
 //		toStringExample();
 //		collectListExample();
-		userCommentsFlatMapExample();
+//		userCommentsFlatMapExample();
+//		userCommentsZipWithExample();
+		userCommentsZipWithForm2Example();
+	}
+
+	public void userCommentsZipWithForm2Example() {
+		Mono<User> userMono = Mono.fromCallable(() -> new User("Jhon", "Doe"));
+
+		Mono<Comments> commentsUserMono = Mono.fromCallable(() -> {
+			Comments comments = new Comments();
+			comments.addComment("Hola pepe que tal");
+			comments.addComment("Mañana voy a la playa");
+			comments.addComment("Estoy tomando el curso de spring");
+			return comments;
+		});
+		Mono<UserComments> userZipComments = userMono.zipWith(commentsUserMono).map(tuple -> {
+			User u = tuple.getT1();
+			Comments c = tuple.getT2();
+			return new UserComments(u, c);
+		});
+
+		userZipComments.subscribe(userComments -> log.info(userComments.toString()));
+	}
+
+	public void userCommentsZipWithExample() {
+		Mono<User> userMono = Mono.fromCallable(() -> new User("Jhon", "Doe"));
+
+		Mono<Comments> commentsUserMono = Mono.fromCallable(() -> {
+			Comments comments = new Comments();
+			comments.addComment("Hola pepe que tal");
+			comments.addComment("Mañana voy a la playa");
+			comments.addComment("Estoy tomando el curso de spring");
+			return comments;
+		});
+		Mono<UserComments> userZipComments = userMono.zipWith(commentsUserMono,
+				(user, userComments) -> new UserComments(user, userComments));
+
+		userZipComments.subscribe(userComments -> log.info(userComments.toString()));
 	}
 
 	public void userCommentsFlatMapExample() {
