@@ -33,7 +33,15 @@ public class SpringBootReactorApplication implements CommandLineRunner {
 //		collectListExample();
 //		userCommentsFlatMapExample();
 //		userCommentsZipWithExample();
-		userCommentsZipWithForm2Example();
+//		userCommentsZipWithForm2Example();
+		zipWithRangeExample();
+	}
+
+	public void zipWithRangeExample() {
+		Flux<Integer> ranges = Flux.range(0, 4);
+		Flux.just(1, 2, 3, 4).map(i -> (i * 2))
+				.zipWith(ranges, (uno, dos) -> String.format("Primer Flux: %d Segundo Flux: %d", uno, dos))
+				.subscribe(text -> log.info(text));
 	}
 
 	public void userCommentsZipWithForm2Example() {
